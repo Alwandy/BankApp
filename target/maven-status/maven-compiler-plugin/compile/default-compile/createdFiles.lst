@@ -1,0 +1,5 @@
+com\mycompany\bankapp\model\Accounts.class
+com\mycompany\bankapp\service\AccountsService.class
+com\mycompany\bankapp\model\Transactions.class
+com\mycompany\bankapp\resources\AccountsResources.class
+com\mycompany\bankapp\model\Customer.class
