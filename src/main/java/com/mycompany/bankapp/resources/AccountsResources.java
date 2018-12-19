@@ -8,12 +8,14 @@ package com.mycompany.bankapp.resources;
 import com.mycompany.bankapp.model.Customer;
 import com.mycompany.bankapp.model.Transactions;
 import com.mycompany.bankapp.service.AccountsService;
+import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -92,8 +94,8 @@ public class AccountsResources {
        @GET
        @Produces(MediaType.APPLICATION_JSON)
        @Path("/history/{cId}")
-       public Object history(@PathParam("cId") int customerId){
-             return accountsService.getAllTransfersFromAccount(customerId);
+       public Response history(@PathParam("cId") int customerId){
+            List<Transactions> entity = accountsService.getAllTransfersFromAccount(customerId);
+            return Response.ok().entity(entity).build();
        }
-       
 }

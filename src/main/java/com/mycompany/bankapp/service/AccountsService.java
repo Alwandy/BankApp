@@ -8,6 +8,7 @@ import com.mycompany.bankapp.model.Customer;
 import com.mycompany.bankapp.model.Transactions;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import javax.transaction.Transaction;
 
 /**
@@ -89,12 +90,16 @@ public class AccountsService {
     /*
     Gets the list of transactions of given customer 
     */
-    public Object getAllTransfersFromAccount(int cId) {
+    public List<Transactions> getAllTransfersFromAccount(final int cId) {
+        /* Create List */
+        List<Transactions> transactionsList = new ArrayList<>();
         for(Transactions history : transactionsHistory) {
             if(history.getTransactions() == cId) {
-                return history;
+                /* Add Items */
+                transactionsList.add(history);
             }
         }
-        return null;
+        /* Return List */
+        return transactionsList;
     }
 }
