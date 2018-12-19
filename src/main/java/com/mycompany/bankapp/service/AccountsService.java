@@ -8,6 +8,7 @@ import com.mycompany.bankapp.model.Customer;
 import com.mycompany.bankapp.model.Transactions;
 import java.util.ArrayList;
 import java.util.Iterator;
+import javax.transaction.Transaction;
 
 /**
  *
@@ -19,60 +20,81 @@ public class AccountsService {
 
     public AccountsService(){}
 
-    public String createAccount(int accountId, String fullName, String address, String email, int sortCode, int balance) {
-        accounts.add(new Customer(accountId, fullName, address, email, sortCode, balance));
-        return ("We have now successfully created account with account id: " + accountId);
-    }
-
-    public void getBalance(int cId){
-        System.out.println("Balance: " + accounts.get(cId).balance);
+    /*
+    Create account 
+    */
+    public void createAccount(int accountId, String fullname, String address, String email, int sortCode, int balance) {
+        accounts.add(new Customer(accountId, fullname, address, email, sortCode, balance));
     }
     
+    /*
+    Gets balance 
+    */
+    public int getBalance(int cId){
+        return accounts.get(cId).balance;
+    }
+    
+    /*
+    Returns the account details 
+    */
+    public Customer getAccount(int cId){
+        return accounts.get(cId);
+    }
+    
+    /*
+    Deposit money 
+    */
     public void deposit(int cId, int amount){
         accounts.get(cId).deposit(amount);
         transactionsHistory.add(new Transactions(0, cId, amount));
     }
-
+    
+    /*
+    Withdraw money 
+    */
     public void withdraw(int cId, int amount){
         accounts.get(cId).withdraw(amount);
         transactionsHistory.add(new Transactions(1, cId, amount));
     }
-
-    public void transfer(int cId, int tcId, int amount){
-        accounts.get(cId).withdraw(amount);
-        accounts.get(tcId).deposit(amount);
-        System.out.println("You have now successfully transferred " + amount + " to " + accounts.get(tcId).fullName);
-        transactionsHistory.add(new Transactions(2, cId, amount));
-        transactionsHistory.add(new Transactions(3, tcId, amount));
+    
+    /*
+    Transfers money between accounts 
+    0 = failed 
+    1 = succeeded 
+    */
+    public int transfer(int cId, int tcId, int amount){
+        if(accounts.get(cId) != null || accounts.get(tcId) != null){
+           int error = accounts.get(cId).withdraw(amount);
+           if(error == 1) {
+                accounts.get(tcId).deposit(amount);
+                System.out.println("You have now successfully transferred " + amount + " to " + accounts.get(tcId).fullname);
+                transactionsHistory.add(new Transactions(2, cId, amount));
+                transactionsHistory.add(new Transactions(3, tcId, amount));
+           } else {
+                return 0;
+           }
+        } else {
+            return 0;
+        } 
+        return 1;
     }
-
+    
+    /*
+    To create unique id based on size of array list
+    */
     public int getSize() {
         return accounts.size();
     }
-
-    public Iterator<Customer> getAllAccounts(){
-        return accounts.iterator();
-    }
-
-    public void getAllTransfersFromAccount(int cId) {
-        System.out.println("Checking account transaction of " + accounts.get(cId).fullName);
+    
+    /*
+    Gets the list of transactions of given customer 
+    */
+    public Object getAllTransfersFromAccount(int cId) {
         for(Transactions history : transactionsHistory) {
             if(history.getTransactions() == cId) {
-                switch(history.transType) {
-                    case 0:
-                        System.out.println("Transaction: Deposit Amount: " + history.amount);
-                        break;
-                    case 1:
-                        System.out.println("Transaction: Withdraw Amount: " + history.amount);
-                        break;
-                    case 2:
-                        System.out.println("Transaction: Transfer Amount: " + history.amount);
-                        break;
-                    case 3:
-                        System.out.println("Transaction: Transfer Received Amount: " + history.amount);
-                        break;
-                }
+                return history;
             }
         }
+        return null;
     }
 }
